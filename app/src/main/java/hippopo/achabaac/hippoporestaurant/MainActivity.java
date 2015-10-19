@@ -15,11 +15,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //create & connected Database
-        creatAndConnected();    //Method ที่ทำหน้าที่แค่ Create และ Connected Database
+        createAndConnected();    //Method ที่ทำหน้าที่แค่ Create และ Connected Database
 
     } // นี่คือ main Method
 
-    private void creatAndConnected() {
+    private void createAndConnected() {
 
         objUserTABLE = new UserTABLE(this); // this เรียกใช้ UserTABLE อัตโนมัติ
 
