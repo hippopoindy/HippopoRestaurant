@@ -2,6 +2,7 @@ package hippopo.achabaac.hippoporestaurant;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -24,6 +25,43 @@ public class UserTABLE {
         writeSqLiteDatabase = objMyOpenHelper.getWritableDatabase();
         readSqLiteDatabase = objMyOpenHelper.getReadableDatabase();
     }   //Constructor(Method ที่มีชื่อเดียวกับ Class)
+
+    public String[] searchUser(String strUser) {
+
+        try {
+
+            String[] strResult = null;
+            Cursor objCursor = readSqLiteDatabase.query(USER_TABLE, new String[]{COLUMN_ID_USER, COLUMN_USER, COLUMN_PASSWORD, COLUMN_NAME},
+                    COLUMN_USER + "=?",
+                    new String[]{String.valueOf(strUser)},
+                    null, null, null, null);
+
+            //cursor คือ การเลือกข้อมูลจาก db ที่มาประมวลผลที่ Memory ก่อน (ยกมาทั้งตาราง) แล้วค่อยเข้าไปอัพเดทที่ db
+
+            if (objCursor != null) {
+                if (objCursor.moveToFirst()) {
+                    //moveToFirst ค้นหาจากบนลงล่าง
+                    strResult = new String[objCursor.getColumnCount()];
+                    strResult[0] = objCursor.getString(0);
+                    strResult[1] = objCursor.getString(1);
+                    strResult[2] = objCursor.getString(2);
+                    strResult[3] = objCursor.getString(3);
+
+
+                }   //if2
+            }   //if1
+
+            objCursor.close();
+            return strResult;
+
+
+
+        } catch (Exception e) {
+            return null;
+        }
+
+        //return new String[0];
+    }
 
 
     // สร้าง method ที่เรียกใช้จากภายนอกได้ด้วย

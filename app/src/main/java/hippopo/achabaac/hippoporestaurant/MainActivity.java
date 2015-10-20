@@ -1,11 +1,16 @@
 package hippopo.achabaac.hippoporestaurant;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,11 +30,17 @@ public class MainActivity extends AppCompatActivity {
     private UserTABLE objUserTABLE;
     private FoodTABLE objFoodTABLE; //ตัวแปรสีเทา (ยังไม่ใช้งาน) สีม่วง (ใช้งวานแล้ว)
 
+    private EditText userEditText , passwordEditText;
+    private String userString, passwordString;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Bind Widget ทำการผูกตัวแปร 2 ตัว กับ widget EditText(username) EditText2(Password)
+        bindWidget();
 
         //create & connected Database
         createAndConnected();    //Method ที่ทำหน้าที่แค่ Create และ Connected Database
@@ -40,12 +51,76 @@ public class MainActivity extends AppCompatActivity {
         //Delete All SQLite
        deleteAllSQLite();
 
-
         // synchronize JSON to SQLite
        synJSONtoSQLite();
 
 
     } // นี่คือ main Method
+
+    private void bindWidget() {
+        userEditText = (EditText) findViewById(R.id.editText); //Cast To เปลี่ยน data type ให้เป็น editText
+        passwordEditText = (EditText) findViewById(R.id.editText2);
+    }
+
+    public void clickLogin(View view) {
+        userString = userEditText.getText().toString().trim();
+        passwordString = passwordEditText.getText().toString().trim();
+
+        if (userString.equals("") || passwordString.equals("")) {
+
+            //Have Space
+            errorDialog("กรอกข้อมูลไม่ครบ", "กรุณากรอก Username หรือ Password ให้ถูกต้อง");
+
+        } else {
+
+            //No Space
+            checkUser();
+
+        }
+
+    }
+
+    private void checkUser() {
+
+        try {
+
+            String[] strMyResult = objUserTABLE.searchUser(userString); // เรียกใช้ searchUser(userString)
+
+
+            // if --- check pasword ที่ user กรอกมาว่าตรงไหม
+            if (passwordString.equals(strMyResult[2])) {
+
+                //ถ้า password ตรง แสดงข้อความ welcome
+                Toast.makeText(MainActivity.this, "Welcome " + strMyResult[3], Toast.LENGTH_LONG).show();
+
+            } else {
+                errorDialog("Password False", "Please Try Again Password False");
+            }
+
+        } catch (Exception e) {
+            errorDialog("No This User", "No " + userString + " on my Database");
+        }
+
+    }
+
+    private void errorDialog(String strTitle, String strMessage) {
+        AlertDialog.Builder objBuilder = new AlertDialog.Builder(this);
+        objBuilder.setIcon(R.drawable.danger);
+        objBuilder.setTitle(strTitle);
+        objBuilder.setMessage(strMessage);
+        objBuilder.setCancelable(false);
+        objBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        objBuilder.show();
+
+
+    }
+
 
     private void synJSONtoSQLite() {
         //0. Change Policy

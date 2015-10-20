@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Hippopo Restaurant</string>
+
+    <string name="user">User :</string>
+    <string name="pass">Password :</string>
+    <string name="BAAC">ฮิปโปโปะ Indy</string>
+
 </resources>
