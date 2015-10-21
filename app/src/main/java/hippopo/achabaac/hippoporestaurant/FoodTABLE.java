@@ -2,6 +2,7 @@ package hippopo.achabaac.hippoporestaurant;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -24,6 +25,46 @@ public class FoodTABLE {
         writeSqLiteDatabase = objMyOpenHelper.getWritableDatabase();
         readSqLiteDatabase = objMyOpenHelper.getReadableDatabase();
     } // Constructor
+
+    public String[] readAllData(int intType) {
+
+        String[] strResult = null;
+        Cursor objCursor = readSqLiteDatabase.query(FOOD_TABLE,
+                new String[]{COLUMN_ID_FOOD, COLUMN_FOOD, COLUMN_SOURCE, COLUMN_PRICE},
+                null, null, null, null, null);
+
+        if (objCursor != null) {
+            //ต้องมี data ถึงจะเข้าเงื่อนไขนี้
+            objCursor.moveToFirst();
+            strResult = new String[objCursor.getCount()];
+
+            for (int i = 0; i<objCursor.getCount(); i++) {
+
+                switch (intType) {
+                    case 0:
+                        strResult[i] = objCursor.getString(objCursor.getColumnIndex(COLUMN_FOOD));
+                        break;
+                    case 1:
+                        strResult[i] = objCursor.getString(objCursor.getColumnIndex(COLUMN_SOURCE));
+                        break;
+                    case 2:
+                        strResult[i] = objCursor.getString(objCursor.getColumnIndex(COLUMN_PRICE));
+                        break;
+                    default:
+                        break;
+                } //switch
+
+                objCursor.moveToNext(); //ขยับค่าถัดไป ++
+
+            }   //for
+
+        }   //if
+
+        objCursor.close();
+
+        return strResult;
+    }
+
 
     public long addNewFood(String strFood, String strSource, String strPrice) {
 

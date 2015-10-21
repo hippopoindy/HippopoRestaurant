@@ -22,7 +22,7 @@
             android:textSize="@dimen/h1"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
-            android:textColor="#ffffff"
+            android:textColor="@color/text"
             android:textColorHighlight="#9a9a9a" />
 
         <ImageView
